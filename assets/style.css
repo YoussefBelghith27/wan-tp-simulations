@@ -1,0 +1,55 @@
+/* Atelier Technologies WAN — palette tirée de GNS3 : liaisons série rouges, ports verts, routeurs bleu-vert */
+:root {
+  --paper: #edf1f4;
+  --paper-2: #e2e8ed;
+  --surface: #ffffff;
+  --ink: #15253b;
+  --muted: #56677b;
+  --line: #c8d2db;
+  --router: #2e7f86;
+  --router-dark: #1f5d63;
+  --serial: #d23b33;
+  --port: #2db24a;
+  --hint: #fff3b0;
+  --console: #000000;
+  --radius-s: 6px;
+  --radius-m: 12px;
+  --font: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--font); font-size: 16px; line-height: 1.55;
+  font-variation-settings: "wdth" 100;
+}
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--router); outline-offset: 2px; border-radius: 4px; }
+code, .cmd { font-family: var(--mono); font-size: .86em; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: .45em; justify-content: center;
+  font: 600 .92rem/1 var(--font); text-decoration: none; cursor: pointer;
+  padding: .7em 1.05em; border-radius: var(--radius-s); border: 1.5px solid var(--ink);
+  background: transparent; color: var(--ink); transition: background .15s, color .15s, transform .1s;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--ink); color: var(--paper); }
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--router); border-color: var(--router); color: #fff; }
+.btn-primary:hover { background: var(--router-dark); border-color: var(--router-dark); color: #fff; }
+.btn-quiet { border-color: var(--line); color: var(--muted); }
+.btn-quiet:hover { background: var(--paper-2); color: var(--ink); }
+.btn svg { width: 1.05em; height: 1.05em; flex: none; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: .4em; font-size: .78rem; font-weight: 600;
+  padding: .22em .6em; border-radius: 999px; background: var(--paper-2); color: var(--muted);
+}
+.badge::before { content: ""; width: .5em; height: .5em; border-radius: 50%; background: currentColor; }
+.badge.real { background: #dcf3e2; color: #1d7a34; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition: none !important; }
+}

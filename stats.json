@@ -1,0 +1,52 @@
+{
+ "tp1-mpls-p1": {
+  "slides": 29,
+  "commands": 12,
+  "size_kb": 3349
+ },
+ "tp1-mpls-p2": {
+  "slides": 19,
+  "commands": 10,
+  "size_kb": 852
+ },
+ "tp2-vpn-mpls": {
+  "slides": 31,
+  "commands": 20,
+  "size_kb": 2054
+ },
+ "lab-bgp": {
+  "slides": 26,
+  "commands": 15,
+  "size_kb": 1035
+ },
+ "redistribution": {
+  "slides": 26,
+  "commands": 14,
+  "size_kb": 1742
+ },
+ "tp3-dhcp-nat": {
+  "slides": 29,
+  "commands": 20,
+  "size_kb": 1907
+ },
+ "tp5-vpn-ipsec": {
+  "slides": 27,
+  "commands": 19,
+  "size_kb": 1474
+ },
+ "tp5bis-gre-ipsec": {
+  "slides": 33,
+  "commands": 24,
+  "size_kb": 3115
+ },
+ "tp6-frame-relay": {
+  "slides": 26,
+  "commands": 18,
+  "size_kb": 2230
+ },
+ "tp6bis-frame-relay-avance": {
+  "slides": 33,
+  "commands": 21,
+  "size_kb": 2999
+ }
+}

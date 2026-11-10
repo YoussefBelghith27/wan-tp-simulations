@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulation – Atelier Technologies WAN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  body { background: #1b2230; color: #e9eef3; min-height: 100svh; display: flex; flex-direction: column; }
+  .bar { display: flex; align-items: center; gap: 14px; padding: 10px 18px; background: var(--ink); flex-wrap: wrap; }
+  .bar a.back { color: #c9d6e3; text-decoration: none; font-size: .9rem; display: inline-flex; gap: 6px; align-items: center; }
+  .bar a.back:hover { color: #fff; }
+  .bar h1 { font-size: 1rem; margin: 0; font-weight: 700; font-variation-settings: "wdth" 110; flex: 1; min-width: 200px; }
+  .bar h1 span { color: #8fb3c7; font-weight: 500; }
+  .bar .links { display: flex; gap: 8px; }
+  .bar .btn { color: #e9eef3; border-color: #4a5a70; padding: .5em .8em; font-size: .85rem; }
+  .bar .btn:hover { background: #e9eef3; color: var(--ink); }
+
+  .layout { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 16px; padding: 14px 18px; }
+  .stagewrap { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; }
+  .stage {
+    position: relative; width: min(100%, calc((100svh - 170px) * 1.1717)); aspect-ratio: 1242 / 1060;
+    container-type: inline-size; background: #000; border-radius: 6px; overflow: hidden;
+    box-shadow: 0 0 0 1px #34425a;
+  }
+  .stage img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; user-select: none; }
+  .subtitle {
+    position: absolute; left: 0; right: 0; top: 0; min-height: 7.92%; padding: .55cqw 2cqw;
+    background: rgba(11, 31, 51, .97); color: #fff; display: grid; place-content: center;
+    text-align: center; font-size: clamp(11px, 1.42cqw, 19px); line-height: 1.3;
+  }
+  .subtitle b { color: #9ad3d8; margin-right: .4em; }
+  .subtitle span { display: inline; }
+  .cli {
+    position: absolute; top: 98.02%; height: 1.98%;
+    background: #000; color: #fff; border: 1px solid var(--port); border-radius: 2px;
+    font: clamp(9px, 1.05cqw, 14px) var(--mono); padding: 0 .3cqw; outline: none; caret-color: #fff;
+  }
+  .cli:focus { box-shadow: 0 0 0 2px rgba(45, 178, 74, .55); }
+  .cli.ok { border-color: var(--port); background: #062a10; }
+  .cli.bad { border-color: var(--serial); animation: shake .35s; }
+  @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+  .hint {
+    position: absolute; left: 49.3%; width: 44.3%; top: 90.75%; min-height: 5.28%;
+    background: var(--hint); color: #1b1b1b; border: 2px solid #e0a800; border-radius: 3px;
+    display: flex; align-items: center; justify-content: center; text-align: center; padding: .4cqw .8cqw;
+    font-size: clamp(10px, 1.1cqw, 15px); font-weight: 600; line-height: 1.3;
+  }
+  .hint code { font-family: var(--mono); font-weight: 600; word-break: break-word; }
+  .feedback {
+    position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); max-width: 80%;
+    background: #fff; color: var(--ink); border-left: 5px solid var(--serial); padding: 1.2cqw 2cqw; border-radius: 4px;
+    font-size: clamp(12px, 1.4cqw, 18px); box-shadow: 0 8px 30px rgba(0, 0, 0, .5); display: none;
+  }
+  .feedback code { font-family: var(--mono); font-weight: 600; }
+  .feedback.show { display: block; }
+  .tag { position: absolute; right: .7%; top: 8.6%; background: #282828; color: #9a9a9a; font-size: clamp(8px, .85cqw, 12px); padding: .15cqw .6cqw; border-radius: 3px; }
+  .hidden { display: none !important; }
+
+  .controls { width: min(100%, calc((100svh - 170px) * 1.1717)); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .ctl { background: #2a3547; color: #e9eef3; border: 0; border-radius: 6px; height: 38px; min-width: 40px; padding: 0 12px;
+         font: 600 .88rem var(--font); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .ctl:hover { background: #3a4860; }
+  .ctl svg { width: 16px; height: 16px; }
+  .ctl[aria-pressed="true"] { background: var(--router); }
+  .progress { flex: 1; min-width: 120px; height: 8px; background: #2a3547; border-radius: 4px; position: relative; overflow: hidden; cursor: pointer; }
+  .progress i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--serial); border-radius: 4px; transition: width .25s; }
+  .progress b { position: absolute; left: 0; bottom: 0; height: 2px; background: #fff; opacity: .7; }
+  .count { font-size: .85rem; color: #b8c6d4; min-width: 60px; text-align: right; font-variant-numeric: tabular-nums; }
+
+  aside { background: #222c3c; border-radius: 8px; padding: 14px; overflow: auto; max-height: calc(100svh - 90px); }
+  aside h2 { font-size: .95rem; margin: 0 0 10px; color: #c9d6e3; }
+  aside ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; counter-reset: c; }
+  aside li button { counter-increment: c; width: 100%; text-align: left; background: transparent; border: 0; color: #c9d6e3;
+                    padding: 8px 10px; border-radius: 6px; font: .88rem var(--font); cursor: pointer; display: grid; grid-template-columns: 22px 1fr; gap: 6px; }
+  aside li button::before { content: counter(c); color: #7e93a8; font-weight: 700; }
+  aside li button:hover { background: #2c384c; }
+  aside li button.cur { background: #2e4c5a; color: #fff; }
+  aside li button.cur::before { color: var(--port); }
+  aside .score { margin-top: 16px; padding-top: 12px; border-top: 1px solid #34425a; font-size: .86rem; color: #b8c6d4; }
+  aside .score strong { color: #fff; font-size: 1.1rem; }
+
+  .end, .loading { position: absolute; inset: 0; background: rgba(13, 20, 31, .93); display: flex; flex-direction: column;
+                   align-items: center; justify-content: center; gap: 1.6cqw; text-align: center; padding: 4cqw; }
+  .end h2 { margin: 0; font-size: clamp(20px, 3.4cqw, 42px); font-variation-settings: "wdth" 115; }
+  .end p { margin: 0; color: #c9d6e3; font-size: clamp(13px, 1.6cqw, 19px); max-width: 52ch; }
+  .end .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .end .btn { color: #fff; border-color: #6c7f97; }
+  .end .btn-primary { border-color: var(--router); }
+  .loading p { color: #c9d6e3; }
+  .spinner { width: 34px; height: 34px; border: 3px solid #34425a; border-top-color: var(--port); border-radius: 50%; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 980px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { max-height: none; }
+  }
+  @media (max-width: 640px) {
+    .layout { padding: 10px; }
+    .bar .links { width: 100%; }
+    .cli { left: 0 !important; right: 0; width: 100% !important; top: auto; bottom: 0; height: auto; margin: 0; padding: 6px 8px; font-size: 14px; border-width: 2px; }
+    .hint { left: 2%; width: 96%; top: auto; bottom: 42px; transform: none; margin: 0; font-size: 12px; padding: 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="bar">
+  <a class="back" href="index.html"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Tous les TP</a>
+  <h1 id="title">Simulation</h1>
+  <div class="links"><a class="btn" id="crlink" target="_blank" rel="noopener">Compte rendu (PDF)</a></div>
+</div>
+<div class="layout">
+  <div class="stagewrap">
+    <div class="stage" id="stage">
+      <img id="img" alt="">
+      <div class="subtitle" id="sub" aria-live="polite"></div>
+      <span class="tag hidden" id="tag">résultat attendu</span>
+      <div class="hint hidden" id="hint"></div>
+      <input class="cli hidden" id="cli" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Commande IOS">
+      <div class="feedback" id="fb" role="alert"></div>
+      <div class="loading" id="loading"><div class="spinner"></div><p>Chargement de la simulation…</p></div>
+      <div class="end hidden" id="end"></div>
+    </div>
+    <div class="controls">
+      <button class="ctl" id="prev" aria-label="Diapositive précédente"><svg viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="ctl" id="play" aria-label="Pause"><svg viewBox="0 0 24 24" id="playicon"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg></button>
+      <button class="ctl" id="next" aria-label="Diapositive suivante"><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="progress" id="progress" title="Aller à une diapositive"><i id="bar"></i><b id="timer"></b></div>
+      <span class="count" id="count">0 / 0</span>
+      <button class="ctl" id="hintbtn" aria-pressed="true">Indices</button>
+      <button class="ctl" id="demo" aria-pressed="false">Démo</button>
+    </div>
+  </div>
+  <aside>
+    <h2>Étapes</h2>
+    <ol id="chapters"></ol>
+    <div class="score" id="score"></div>
+  </aside>
+</div>
+<script src="assets/catalog.js"></script>
+<script src="assets/player.js"></script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atelier Technologies WAN – Simulations des TP</title>
+<meta name="description" content="Dix travaux pratiques WAN (MPLS, VPN MPLS, BGP, redistribution, NAT, IPsec, GRE, Frame Relay) à rejouer dans le navigateur, avec leurs comptes rendus.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+  header.top { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 0; color: var(--muted); font-size: .92rem; }
+  header.top strong { color: var(--ink); }
+
+  /* ---------- Hero ---------- */
+  .hero { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 40px; align-items: center; padding: 28px 0 40px; }
+  .hero h1 {
+    font-size: clamp(2.1rem, 4.1vw, 3.5rem); line-height: 1.02; margin: 0 0 22px; letter-spacing: -.01em;
+    font-variation-settings: "wdth" 122; font-weight: 800; max-width: 13ch;
+  }
+  .hero p { font-size: 1.08rem; color: var(--muted); max-width: 46ch; margin: 0 0 22px; }
+  .hero .meta { font-size: .95rem; color: var(--ink); }
+  .topo-box { position: relative; background: var(--surface); border: 1.5px solid var(--line); border-radius: var(--radius-m); padding: 6px; }
+  .topo-box svg { display: block; width: 100%; height: auto; }
+  .topo-caption { display: block; padding: 4px 10px 6px; font-size: .82rem; color: var(--muted); }
+  svg .link { fill: none; stroke: var(--serial); stroke-width: 2.6; stroke-linejoin: round; }
+  svg .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .9s cubic-bezier(.6,0,.3,1) forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  svg .portdot { fill: var(--port); opacity: 0; animation: pop .3s ease-out forwards; }
+  @keyframes pop { to { opacity: 1; } }
+  svg .packet { fill: var(--ink); }
+  svg .node { cursor: pointer; }
+  svg .node .body { transition: transform .2s; transform-origin: center; transform-box: fill-box; }
+  svg .node:hover .body, svg .node:focus-visible .body { transform: scale(1.12); }
+  svg .node text { font: 600 12.5px var(--font); fill: var(--ink); text-anchor: middle; paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+  svg .node text.sub { font-weight: 400; font-size: 11px; fill: var(--muted); }
+  svg .node { opacity: 0; animation: pop .35s ease-out forwards; }
+  svg .cloud { fill: #fff8c9; stroke: #b9a53a; stroke-width: 1; }
+  svg .cloud-label { font: 600 12px var(--font); fill: #7c6e1f; }
+
+  /* ---------- Groupes de TP ---------- */
+  .group { padding: 34px 0 6px; border-top: 1.5px solid var(--line); }
+  .group h2 { font-size: 1.05rem; font-weight: 700; margin: 0 0 4px; font-variation-settings: "wdth" 112; }
+  .group .gdesc { color: var(--muted); font-size: .95rem; margin: 0 0 14px; }
+  .tp {
+    display: grid; grid-template-columns: 132px minmax(0, 1fr) auto; gap: 26px; align-items: start;
+    padding: 22px 0; border-top: 1px dashed var(--line);
+  }
+  .group .tp:first-of-type { border-top: 0; }
+  .tp:target { animation: flash 1.6s ease-out; }
+  @keyframes flash { 0%, 30% { background: #fff6c2; } 100% { background: transparent; } }
+  .tp .num { font-size: 1.5rem; font-weight: 800; line-height: 1.05; font-variation-settings: "wdth" 125; color: var(--router); }
+  .tp .num.long { font-size: 1.12rem; font-variation-settings: "wdth" 100; }
+  .tp .num small { display: block; font-size: .78rem; font-weight: 500; color: var(--muted); margin-top: 6px; font-variation-settings: "wdth" 100; }
+  .tp h3 { margin: 0 0 6px; font-size: 1.32rem; line-height: 1.2; font-variation-settings: "wdth" 108; }
+  .tp p { margin: 0 0 10px; color: var(--muted); max-width: 70ch; }
+  .tp .cmds { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .tp .cmds code { background: var(--console); color: #e8e8e8; padding: .28em .6em; border-radius: 4px; font-size: .8rem; }
+  .tp .facts { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: .86rem; color: var(--muted); }
+  .tp .actions { display: flex; flex-direction: column; gap: 8px; min-width: 210px; }
+
+  /* ---------- Mode d'emploi ---------- */
+  .howto { padding: 42px 0 18px; border-top: 1.5px solid var(--line); display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 40px; }
+  .howto h2 { margin: 0; font-size: 1.6rem; line-height: 1.1; font-variation-settings: "wdth" 115; }
+  .howto ol { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 14px; }
+  .howto li { counter-increment: s; display: grid; grid-template-columns: 40px 1fr; gap: 12px; }
+  .howto li::before { content: counter(s); width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--serial); color: var(--serial); font-weight: 700; display: grid; place-items: center; }
+  .note { margin: 26px 0 0; padding: 14px 18px; border-left: 3px solid var(--router); background: var(--surface); color: var(--muted); font-size: .92rem; border-radius: 0 var(--radius-s) var(--radius-s) 0; }
+  footer { padding: 34px 0 50px; color: var(--muted); font-size: .88rem; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 26px; }
+    .howto { grid-template-columns: 1fr; gap: 18px; }
+    .tp { grid-template-columns: 1fr; gap: 10px; }
+    .tp .actions { flex-direction: row; flex-wrap: wrap; min-width: 0; }
+  }
+  @media (max-width: 520px) {
+    .wrap { padding: 0 16px; }
+    header.top { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .tp .actions .btn { flex: 1 1 100%; }
+    svg .node text.sub { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span><strong>Atelier Technologies WAN</strong> – RSI3, ISET Nabeul</span>
+    <span>Youssef Belghith, RSI31, 2026–2027</span>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1>Les TP WAN, à rejouer commande par commande</h1>
+      <p>Dix travaux pratiques, du backbone MPLS au Frame Relay. Chaque simulation vous fait taper les commandes IOS dans la console, et chaque compte rendu détaille la configuration, les vérifications et les réponses aux questions.</p>
+      <p class="meta" id="totals"></p>
+      <a class="btn btn-primary" href="#tps">Voir les TP</a>
+    </div>
+    <div class="topo-box">
+      <svg id="topo" viewBox="0 0 720 440" role="img" aria-label="Carte des TP sous forme de topologie réseau : chaque routeur ouvre un TP"></svg>
+      <span class="topo-caption">Chaque routeur est un TP : cliquez pour y aller.</span>
+    </div>
+  </section>
+
+  <main id="tps"></main>
+
+  <section class="howto">
+    <h2>Utiliser une simulation</h2>
+    <div>
+      <ol>
+        <li><span>Ouvrez un TP avec <b>Lancer la simulation</b>. Le sous-titre en haut de l'écran explique chaque étape.</span></li>
+        <li><span>Quand le cadre vert apparaît sur l'invite, tapez la commande IOS demandée puis appuyez sur <b>Entrée</b>. Les abréviations courantes sont acceptées (<code>conf t</code>, <code>sh ip route</code>…).</span></li>
+        <li><span>Le mode <b>Démo</b> tape les commandes à votre place. À la fin, le score indique les commandes réussies du premier coup.</span></li>
+      </ol>
+      <p class="note">Le TP1 partie 1 utilise les captures réelles de la manipulation sous GNS3. Pour les autres TP, les écrans de console sont reconstitués à partir des configurations des énoncés : ce sont des résultats attendus, signalés comme tels dans chaque simulation et chaque compte rendu. Les fichiers ActivePresenter (.approj) sont aussi disponibles pour être modifiés.</p>
+    </div>
+  </section>
+
+  <footer>Youssef Belghith – Atelier Technologies WAN, ISET Nabeul, année universitaire 2026–2027.</footer>
+</div>
+
+<script src="assets/catalog.js"></script>
+<script src="assets/home.js"></script>
+</body>
+</html>
