@@ -2,51 +2,61 @@
  "tp1-mpls-p1": {
   "slides": 29,
   "commands": 12,
+  "wireshark": 0,
   "size_kb": 3349
  },
  "tp1-mpls-p2": {
   "slides": 19,
   "commands": 10,
+  "wireshark": 0,
   "size_kb": 852
  },
  "tp2-vpn-mpls": {
-  "slides": 31,
-  "commands": 20,
-  "size_kb": 2054
+  "slides": 45,
+  "commands": 21,
+  "wireshark": 5,
+  "size_kb": 3280
  },
  "lab-bgp": {
   "slides": 26,
   "commands": 15,
+  "wireshark": 0,
   "size_kb": 1035
  },
  "redistribution": {
   "slides": 26,
   "commands": 14,
+  "wireshark": 0,
   "size_kb": 1742
  },
  "tp3-dhcp-nat": {
   "slides": 29,
   "commands": 20,
+  "wireshark": 0,
   "size_kb": 1907
  },
  "tp5-vpn-ipsec": {
-  "slides": 27,
+  "slides": 39,
   "commands": 19,
-  "size_kb": 1474
+  "wireshark": 5,
+  "size_kb": 2076
  },
  "tp5bis-gre-ipsec": {
-  "slides": 33,
+  "slides": 48,
   "commands": 24,
-  "size_kb": 3115
+  "wireshark": 7,
+  "size_kb": 4265
  },
  "tp6-frame-relay": {
-  "slides": 26,
+  "slides": 36,
   "commands": 18,
-  "size_kb": 2230
+  "wireshark": 6,
+  "size_kb": 2908
  },
  "tp6bis-frame-relay-avance": {
   "slides": 33,
   "commands": 21,
+  "wireshark": 0,
   "size_kb": 2999
  }
 }

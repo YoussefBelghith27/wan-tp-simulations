@@ -14,7 +14,7 @@
   /* ---------- Totaux ---------- */
   const nS = C.tps.reduce((a, t) => a + t.slides, 0), nC = C.tps.reduce((a, t) => a + t.commands, 0);
   document.getElementById("totals").textContent =
-    `${C.tps.length} TP, ${nS} diapositives et ${nC} commandes à taper, sans rien installer.`;
+    `${C.tps.length} TP, ${nS} diapositives, ${nC} commandes à taper et ${C.tps.reduce((a, t) => a + (t.wireshark || 0), 0)} actions dans Wireshark, sans rien installer.`;
 
   /* ---------- Topologie animée ---------- */
   const svg = document.getElementById("topo");
@@ -109,7 +109,7 @@
           <h3>${esc(t.title)}</h3>
           <p>${esc(t.desc)}</p>
           <div class="cmds">${t.cmds.map(c => `<code>${esc(c)}</code>`).join("")}</div>
-          <div class="facts"><span>${t.slides} diapositives</span><span>${t.commands} commandes à taper</span>
+          <div class="facts"><span>${t.slides} diapositives</span><span>${t.commands} commandes à taper</span>${t.wireshark ? `<span>${t.wireshark} actions dans Wireshark</span>` : ""}
             <span class="badge ${t.real ? "real" : ""}">${t.real ? "Captures réelles GNS3" : "Écrans reconstitués"}</span></div>
         </div>
         <div class="actions">

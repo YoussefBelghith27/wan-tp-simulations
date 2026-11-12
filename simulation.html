@@ -43,6 +43,12 @@
   .cli.ok { border-color: var(--port); background: #062a10; }
   .cli.bad { border-color: var(--serial); animation: shake .35s; }
   @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+  .cli.light { background: #fff; color: #000; caret-color: #000; border-width: 2px; font-size: clamp(9px, 1.0cqw, 13px); }
+  .cli.light.ok { background: #e3fbe6; }
+  .hot { position: absolute; background: transparent; border: 0; padding: 0; cursor: pointer; border-radius: 2px; }
+  .hot.cue { box-shadow: 0 0 0 2px #e0a800, 0 0 0 5px rgba(224, 168, 0, .3); animation: cue 1.4s ease-in-out infinite; }
+  .hot.done { box-shadow: 0 0 0 2px var(--port); animation: none; }
+  @keyframes cue { 50% { box-shadow: 0 0 0 2px #e0a800, 0 0 0 7px rgba(224, 168, 0, .12); } }
   .hint {
     position: absolute; left: 49.3%; width: 44.3%; top: 90.75%; min-height: 5.28%;
     background: var(--hint); color: #1b1b1b; border: 2px solid #e0a800; border-radius: 3px;
@@ -101,7 +107,7 @@
   @media (max-width: 640px) {
     .layout { padding: 10px; }
     .bar .links { width: 100%; }
-    .cli { left: 0 !important; right: 0; width: 100% !important; top: auto; bottom: 0; height: auto; margin: 0; padding: 6px 8px; font-size: 14px; border-width: 2px; }
+    .cli { left: 0 !important; right: 0; width: 100% !important; top: auto !important; bottom: 0; height: auto !important; margin: 0; padding: 6px 8px; font-size: 14px; border-width: 2px; }
     .hint { left: 2%; width: 96%; top: auto; bottom: 42px; transform: none; margin: 0; font-size: 12px; padding: 6px; }
   }
 </style>
@@ -119,7 +125,8 @@
       <div class="subtitle" id="sub" aria-live="polite"></div>
       <span class="tag hidden" id="tag">résultat attendu</span>
       <div class="hint hidden" id="hint"></div>
-      <input class="cli hidden" id="cli" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Commande IOS">
+      <button class="hot hidden" id="hot" aria-label="Zone à cliquer"></button>
+      <input class="cli hidden" id="cli" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Commande à taper">
       <div class="feedback" id="fb" role="alert"></div>
       <div class="loading" id="loading"><div class="spinner"></div><p>Chargement de la simulation…</p></div>
       <div class="end hidden" id="end"></div>

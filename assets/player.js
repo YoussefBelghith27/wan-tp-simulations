@@ -31,7 +31,7 @@
     $("chapters").innerHTML = chapters.map((c, k) => `<li><button data-at="${c.at}">${esc(c.step)}</button></li>`).join("");
     $("chapters").addEventListener("click", e => { const b = e.target.closest("button"); if (b) go(+b.dataset.at); });
 
-    const totalCmd = S.filter(x => x.kind === "type").length;
+    const totalCmd = S.filter(x => x.kind !== "show").length;
     $("loading").classList.add("hidden");
     $("tag").classList.toggle("hidden", tp.real);
 
@@ -39,8 +39,8 @@
     function updateScore() {
       const first = result.filter(r => r === "first").length;
       const done = result.filter(r => r).length;
-      $("score").innerHTML = `Commandes réussies du premier coup<br><strong>${first} / ${totalCmd}</strong>` +
-        (done ? `<br>${done} commande${done > 1 ? "s" : ""} traitée${done > 1 ? "s" : ""}` : "");
+      $("score").innerHTML = `Actions réussies du premier coup<br><strong>${first} / ${totalCmd}</strong>` +
+        (done ? `<br>${done} action${done > 1 ? "s" : ""} traitée${done > 1 ? "s" : ""}` : "");
     }
     function setPlayIcon() {
       $("playicon").innerHTML = playing ? '<path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/>' : '<path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/>';
@@ -65,12 +65,26 @@
         const at = +b.dataset.at, nextAt = chapters.find(c => c.at > at)?.at ?? S.length;
         b.classList.toggle("cur", i >= at && i < nextAt);
       });
-      const cli = $("cli"), hint = $("hint");
-      if (sl.kind === "type") {
-        const left = (sl.x / D.w * 100);
-        cli.style.left = left + "%"; cli.style.width = ((1166 - sl.x) / D.w * 100) + "%";
-        cli.value = ""; cli.className = "cli"; cli.readOnly = demo;
-        hint.innerHTML = `Tapez : <code>${esc(sl.answers[0])}</code>&nbsp;puis Entrée`;
+      const cli = $("cli"), hint = $("hint"), hot = $("hot");
+      hot.className = "hot hidden";
+      if (sl.kind === "click") {
+        cli.className = "cli hidden";
+        const [bx, by, bw, bh] = sl.box;
+        Object.assign(hot.style, { left: bx / D.w * 100 + "%", top: by / D.h * 100 + "%", width: bw / D.w * 100 + "%", height: bh / D.h * 100 + "%" });
+        hot.className = "hot" + (hints ? " cue" : "");
+        hint.innerHTML = esc(sl.hint);
+        hint.classList.toggle("hidden", !hints);
+        $("next").setAttribute("aria-label", "Passer ce clic");
+        if (demo) demoTimer = setTimeout(() => { hot.className = "hot cue"; demoTimer = setTimeout(() => { if (!result[i]) result[i] = "demo"; clickOk(); }, 900); }, 700);
+      } else if (sl.kind === "type") {
+        if (sl.box) {
+          const [bx, by, bw, bh] = sl.box;
+          Object.assign(cli.style, { left: bx / D.w * 100 + "%", top: by / D.h * 100 + "%", width: bw / D.w * 100 + "%", height: bh / D.h * 100 + "%" });
+        } else {
+          Object.assign(cli.style, { left: (sl.x / D.w * 100) + "%", width: ((1166 - sl.x) / D.w * 100) + "%", top: "", height: "" });
+        }
+        cli.value = ""; cli.className = "cli" + (sl.box ? " light" : ""); cli.readOnly = demo;
+        hint.innerHTML = sl.box ? `Tapez le filtre : <code>${esc(sl.answers[0])}</code>&nbsp;puis Entrée` : `Tapez : <code>${esc(sl.answers[0])}</code>&nbsp;puis Entrée`;
         hint.classList.toggle("hidden", !hints);
         $("next").setAttribute("aria-label", "Passer cette commande");
         if (demo) runDemo(); else setTimeout(() => cli.focus({ preventScroll: true }), 30);
@@ -88,7 +102,7 @@
     function go(k) { i = Math.max(0, Math.min(S.length - 1, k)); render(); }
     function next() {
       if (i >= S.length - 1) return finish();
-      if (S[i].kind === "type" && !result[i]) result[i] = "skipped";
+      if (S[i].kind !== "show" && !result[i]) result[i] = "skipped";
       go(i + 1);
     }
     function validate() {
@@ -96,13 +110,15 @@
       if (!v) return;
       if (sl.answers.some(a => norm(a) === v)) {
         if (!result[i] || result[i] === "skipped") result[i] = tries[i] === 0 ? "first" : "retry";
-        cli.className = "cli ok"; cli.readOnly = true; $("fb").classList.remove("show");
+        cli.className = "cli ok" + (sl.box ? " light" : ""); cli.readOnly = true; $("fb").classList.remove("show");
         updateScore();
         timer = setTimeout(next, demo ? 700 : 550);
       } else {
         tries[i]++;
-        cli.className = "cli"; void cli.offsetWidth; cli.className = "cli bad";
-        $("fb").innerHTML = `Commande incorrecte. La commande attendue est <code>${esc(sl.answers[0])}</code>.`;
+        const lt = sl.box ? " light" : "";
+        cli.className = "cli" + lt; void cli.offsetWidth; cli.className = "cli bad" + lt;
+        $("fb").innerHTML = sl.box ? `Filtre incorrect. Le filtre attendu est <code>${esc(sl.answers[0])}</code>.`
+          : `Commande incorrecte. La commande attendue est <code>${esc(sl.answers[0])}</code>.`;
         $("fb").classList.add("show");
         setTimeout(() => $("fb").classList.remove("show"), 2600);
         cli.select();
@@ -118,7 +134,20 @@
       };
       demoTimer = setTimeout(step, 700);
     }
-    function validateDemo() { $("cli").className = "cli ok"; timer = setTimeout(next, 650); }
+    function validateDemo() { $("cli").className = "cli ok" + (S[i].box ? " light" : ""); timer = setTimeout(next, 650); }
+    function clickOk() {
+      if (!result[i] || result[i] === "skipped") result[i] = result[i] === "demo" ? "demo" : (tries[i] === 0 ? "first" : "retry");
+      $("hot").className = "hot done"; $("fb").classList.remove("show"); updateScore();
+      clearTimeout(timer); timer = setTimeout(next, demo ? 650 : 450);
+    }
+    $("hot").addEventListener("click", e => { e.stopPropagation(); if (S[i].kind === "click" && !demo) { if (!result[i]) result[i] = tries[i] === 0 ? "first" : "retry"; clickOk(); } });
+    $("stage").addEventListener("click", e => {
+      if (S[i].kind !== "click" || demo || e.target.closest(".end, .hot")) return;
+      tries[i]++;
+      $("fb").innerHTML = `Ce n'est pas le bon endroit. ${esc(S[i].hint)}.`;
+      $("fb").classList.add("show"); $("hot").className = "hot cue";
+      setTimeout(() => $("fb").classList.remove("show"), 2600);
+    });
     function finish() {
       clearTimers();
       const first = result.filter(r => r === "first").length;
@@ -126,7 +155,7 @@
       $("end").innerHTML = `
         <h2>Simulation terminée</h2>
         <p>${demo && !first ? "Démonstration terminée. Relancez en mode pratique pour taper les commandes vous-même."
-          : `Vous avez réussi <strong>${first} commande${first > 1 ? "s" : ""} sur ${totalCmd}</strong> du premier coup${skipped ? `, ${skipped} passée${skipped > 1 ? "s" : ""}` : ""}.`}</p>
+          : `Vous avez réussi <strong>${first} action${first > 1 ? "s" : ""} sur ${totalCmd}</strong> du premier coup${skipped ? `, ${skipped} passée${skipped > 1 ? "s" : ""}` : ""}.`}</p>
         <div class="row">
           <button class="btn btn-primary" id="restart">Recommencer</button>
           <a class="btn" href="${tp.cr}" target="_blank" rel="noopener">Lire le compte rendu</a>
@@ -141,7 +170,7 @@
     $("prev").onclick = () => go(i - 1);
     $("play").onclick = () => { playing = !playing; setPlayIcon(); render(); };
     $("demo").onclick = () => { demo = !demo; $("demo").setAttribute("aria-pressed", demo); render(); };
-    $("hintbtn").onclick = () => { hints = !hints; $("hintbtn").setAttribute("aria-pressed", hints); if (S[i].kind === "type") $("hint").classList.toggle("hidden", !hints); };
+    $("hintbtn").onclick = () => { hints = !hints; $("hintbtn").setAttribute("aria-pressed", hints); if (S[i].kind !== "show") $("hint").classList.toggle("hidden", !hints); if (S[i].kind === "click") $("hot").classList.toggle("cue", hints); };
     $("progress").onclick = e => { const r = e.currentTarget.getBoundingClientRect(); go(Math.floor((e.clientX - r.left) / r.width * S.length)); };
     document.addEventListener("keydown", e => {
       if (e.target === $("cli")) return;

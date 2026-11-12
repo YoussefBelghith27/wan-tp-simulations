@@ -22,7 +22,8 @@ window.CATALOG = {
    "real": true,
    "tool": "GNS3",
    "slides": 29,
-   "commands": 12
+   "commands": 12,
+   "wireshark": 0
   },
   {
    "id": "tp1-mpls-p2",
@@ -39,14 +40,15 @@ window.CATALOG = {
    "real": false,
    "tool": "GNS3",
    "slides": 19,
-   "commands": 10
+   "commands": 10,
+   "wireshark": 0
   },
   {
    "id": "tp2-vpn-mpls",
    "group": "mpls",
    "num": "TP2",
    "title": "VPN MPLS pour un client",
-   "desc": "VRF Client_A avec RD et RT, EIGRP entre PE et CE, MP-BGP VPNv4 entre SP1 et SP3, empilement de deux labels.",
+   "desc": "VRF Client_A avec RD et RT, EIGRP entre PE et CE, MP-BGP VPNv4 entre SP1 et SP3, puis capture Wireshark des deux labels MPLS empilés.",
    "cmds": [
     "ip vrf forwarding Client_A",
     "address-family vpnv4"
@@ -54,9 +56,10 @@ window.CATALOG = {
    "cr": "cr/CR_TP2_VPN_MPLS.pdf",
    "approj": "activepresenter/TP2_VPN_MPLS_Simulation.approj",
    "real": false,
-   "tool": "GNS3",
-   "slides": 31,
-   "commands": 20
+   "tool": "GNS3 + Wireshark",
+   "slides": 45,
+   "commands": 21,
+   "wireshark": 5
   },
   {
    "id": "lab-bgp",
@@ -73,7 +76,8 @@ window.CATALOG = {
    "real": false,
    "tool": "GNS3",
    "slides": 26,
-   "commands": 15
+   "commands": 15,
+   "wireshark": 0
   },
   {
    "id": "redistribution",
@@ -90,7 +94,8 @@ window.CATALOG = {
    "real": false,
    "tool": "GNS3",
    "slides": 26,
-   "commands": 14
+   "commands": 14,
+   "wireshark": 0
   },
   {
    "id": "tp3-dhcp-nat",
@@ -107,14 +112,15 @@ window.CATALOG = {
    "real": false,
    "tool": "Packet Tracer",
    "slides": 29,
-   "commands": 20
+   "commands": 20,
+   "wireshark": 0
   },
   {
    "id": "tp5-vpn-ipsec",
    "group": "vpn",
    "num": "TP5",
    "title": "VPN IPsec site à site",
-   "desc": "Politique ISAKMP de phase 1, transform-set et crypto map de phase 2, compteurs des SA avant et après le trafic.",
+   "desc": "Politique ISAKMP de phase 1, transform-set et crypto map de phase 2, compteurs des SA, puis analyse Wireshark des échanges ISAKMP et des paquets ESP.",
    "cmds": [
     "crypto isakmp policy 10",
     "show crypto ipsec sa"
@@ -122,16 +128,17 @@ window.CATALOG = {
    "cr": "cr/CR_TP5_VPN_IPsec.pdf",
    "approj": "activepresenter/TP5_VPN_IPsec_Simulation.approj",
    "real": false,
-   "tool": "GNS3",
-   "slides": 27,
-   "commands": 19
+   "tool": "GNS3 + Wireshark",
+   "slides": 39,
+   "commands": 19,
+   "wireshark": 5
   },
   {
    "id": "tp5bis-gre-ipsec",
    "group": "vpn",
    "num": "TP5 bis",
    "title": "Tunnel GRE over IPsec",
-   "desc": "Tunnel GRE entre deux sites derrière du NAT, routes vers le tunnel, puis chiffrement du flux GRE par IPsec.",
+   "desc": "Tunnel GRE entre deux sites derrière du NAT, double en-tête IP observé dans Wireshark, puis chiffrement du flux GRE par IPsec.",
    "cmds": [
     "interface Tunnel 0",
     "access-list 101 permit gre host 201.20.20.1 host 204.20.20.2"
@@ -139,16 +146,17 @@ window.CATALOG = {
    "cr": "cr/CR_TP5bis_GRE_over_IPsec.pdf",
    "approj": "activepresenter/TP5bis_GRE_over_IPsec_Simulation.approj",
    "real": false,
-   "tool": "GNS3",
-   "slides": 33,
-   "commands": 24
+   "tool": "GNS3 + Wireshark",
+   "slides": 48,
+   "commands": 24,
+   "wireshark": 7
   },
   {
    "id": "tp6-frame-relay",
    "group": "fr",
    "num": "TP6",
    "title": "Frame Relay de base",
-   "desc": "Encapsulation et LMI, ARP inverse, table de mappage dynamique puis statique dans une topologie en étoile.",
+   "desc": "Encapsulation et LMI analysé dans Wireshark (Full Status, DLCI), ARP inverse, table de mappage dynamique puis statique.",
    "cmds": [
     "encapsulation frame-relay",
     "frame-relay map ip 192.168.2.2 16 broadcast"
@@ -156,9 +164,10 @@ window.CATALOG = {
    "cr": "cr/CR_TP6_FrameRelay_de_base.pdf",
    "approj": "activepresenter/TP6_FrameRelay_de_base_Simulation.approj",
    "real": false,
-   "tool": "GNS3",
-   "slides": 26,
-   "commands": 18
+   "tool": "GNS3 + Wireshark",
+   "slides": 36,
+   "commands": 18,
+   "wireshark": 6
   },
   {
    "id": "tp6bis-frame-relay-avance",
@@ -175,7 +184,8 @@ window.CATALOG = {
    "real": false,
    "tool": "GNS3",
    "slides": 33,
-   "commands": 21
+   "commands": 21,
+   "wireshark": 0
   }
  ]
 };

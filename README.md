@@ -6,7 +6,7 @@ Site des travaux pratiques du module **Technologies WAN** (RSI3, ISET Nabeul), r
 
 Chaque TP propose :
 
-- une **simulation interactive** jouable dans le navigateur : sous-titres explicatifs, commandes IOS à taper dans la console, mode démo et score ;
+- une **simulation interactive** jouable dans le navigateur : sous-titres explicatifs, commandes IOS à taper dans la console, analyse des trames dans Wireshark (TP2, TP5, TP5 bis, TP6), mode démo et score ;
 - son **compte rendu** au format PDF ;
 - le **projet ActivePresenter** (.approj) de la simulation, modifiable.
 
@@ -36,4 +36,4 @@ activepresenter/          projets ActivePresenter (.approj)
 
 ## Origine des écrans
 
-Le TP1 partie 1 utilise les captures réelles de la manipulation sous GNS3. Pour les autres TP, les écrans de console sont **reconstitués** à partir des configurations des énoncés : ce sont des résultats attendus, signalés comme tels dans chaque simulation et chaque compte rendu.
+Le TP1 partie 1 utilise les captures réelles de la manipulation sous GNS3. Pour les autres TP, les écrans de console et de Wireshark sont **reconstitués** à partir des configurations des énoncés : ce sont des résultats attendus, signalés comme tels dans chaque simulation et chaque compte rendu.
